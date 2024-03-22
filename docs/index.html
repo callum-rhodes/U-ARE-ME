@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>U-ARE-ME</title>
+    <!-- <link rel="shortcut icon" type="image/jpg" href="img/logo.ico" /> -->
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/image-compare-viewer/dist/image-compare-viewer.min.css">
+    <link rel="stylesheet" href="./css/twentytwenty.css">
+    <script src="https://kit.fontawesome.com/49f46e7382.js" crossorigin="anonymous"></script>
+    <script type="text/x-mathjax-config"> MathJax.Hub.Config({ TeX: { equationNumbers: { autoNumber: "all" } } }); </script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          processEscapes: true
+        }
+      });
+    </script>
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+</head>
+
+<body>
+    <nav class="navbar is-light" role="navigation" aria-label="main navigation">
+        <div class="container is-max-desktop">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="https://www.imperial.ac.uk/" target="_blank" rel="noopener noreferrer">
+                <img src="img/logo/logo-imperial.png" alt="Imperial College London" style="height: 1.0rem;">
+            </a>
+            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="navbarBasicExample" class="navbar-menu">
+            <div class="navbar-start">
+            </div>
+            <div class="navbar-end">
+                <a class="navbar-item" href="https://www.imperial.ac.uk/dyson-robotics-lab/" target="_blank" rel="noopener noreferrer">
+                    <img src="img/logo/logo-dyson.png" alt="Dyson Robotics Lab" style="height: 2.0rem;">
+                </a>
+            </div>
+        </div>
+    </div>
+    </nav>
+    <section class="section">
+        <div class="container is-max-desktop">
+            <center>
+                <img src="img/logo/logo.gif" style="width:80%" />
+            </center>
+            <!-- <h1 class="title is-2 is-size-3-mobile is-spaced has-text-centered">
+                U-ARE-ME: Uncertainty-Aware Rotation Estimation in Manhattan Environments
+            </h1> -->
+            <p class="subtitle is-5 has-text-centered has-text-grey">
+            </p>
+            <p class="subtitle is-6 has-text-centered authors mt-5" style="line-height: 1.5;">
+                <span>
+                    <a href="https://aalpatya.github.io/" target="_blank" rel="noopener noreferrer">Aalok&nbsp;Patwardhan</a>
+                </span>
+                <span>
+                    <a href="https://scholar.google.com/citations?user=aQSQwcUAAAAJ&hl=en&oi=ao" target="_blank" rel="noopener noreferrer">Callum&nbsp;Rhodes</a>
+                </span>
+                <span>
+                    <a href="https://www.baegwangbin.com" target="_blank" rel="noopener noreferrer">Gwangbin&nbsp;Bae</a>
+                </span>
+                <span>
+                    <a href="https://www.doc.ic.ac.uk/~ajd/" target="_blank" rel="noopener noreferrer">Andrew&nbsp;J.&nbsp;Davison</a>
+                </span>
+            </p>
+            <p class="subtitle is-6 has-text-centered authors mt-5" style="line-height: 1.5;">
+                Dyson Robotics Lab, Imperial College London
+            </p>
+        </div>
+        <div class="container is-max-desktop has-text-centered mt-5">
+            <a href="https://github.com/" class="button is-rounded is-link is-light mr-2" target="_blank" rel="noopener noreferrer">
+                <span class="icon"><i class="fas fa-file-pdf"></i></span>
+                <span>Paper (TBA)</span>
+            </a>
+            <a href="https://arxiv.org/" class="button is-rounded is-link is-light mr-2" target="_blank" rel="noopener noreferrer">
+                <span class="icon"><i class="ai ai-arxiv"></i></span>
+                <span>arXiv (TBA)</span>
+            </a>
+            <a href="https://github.com/callum-rhodes/U-ARE-ME" class="button is-rounded is-link is-light" target="_blank" rel="noopener noreferrer">
+                <span class="icon"><i class="fab fa-github"></i></span>
+                <span>Code </span>
+            </a>
+        </div>
+    </section>
+
+    <section class="section pt-0">
+        <div class="container is-max-desktop">
+            <h1 class="title is-4">
+                Teaser
+            </h1>
+            <video controls>
+                <source src="video/teaser.mp4" type="video/mp4">
+            </video>
+        </div>
+    </section>
+
+
+    <section class="section pt-0">
+        <div class="container is-max-desktop">
+            <h1 class="title is-4">
+                Abstract
+            </h1>
+            <div class="content has-text-justified-desktop">
+                <p>
+                    Camera rotation estimation from a single image is a challenging task, often requiring depth data and/or camera intrinsics, which are generally not available for in-the-wild videos. Although external sensors such as inertial measurement units (IMUs) can help, they often suffer from drift and are not applicable in non-inertial reference frames.
+                    We present U-ARE-ME, an algorithm that estimates camera rotation along with uncertainty from uncalibrated RGB images. Using a Manhattan World assumption, our method leverages the per-pixel geometric priors encoded in single-image surface normal predictions and performs optimisation over the SO(3) manifold.
+                    Given a sequence of images, we can use the per-frame rotation estimates and their uncertainty to perform multi-frame optimisation, achieving robustness and temporal consistency.
+                    Our experiments demonstrate that U-ARE-ME performs comparably to RGB-D methods and is more robust than sparse feature-based SLAM methods.                </p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section pt-0">
+        <div class="container is-max-desktop">
+            <h1 class="title is-4">
+                Acknowledgement
+            </h1>
+            <div class="content has-text-justified-desktop">
+                <p>This research has been supported by the EPSRC Prosperity Partnership Award with Dyson Technology Ltd. 
+                </p>
+            </div>
+        </div>
+    </section>
+
+
+    <footer class="footer">
+        <div class="content has-text-centered">
+            <p>
+                <img src="img/logo/logo-dyson.png" class="mt-5" alt="Dyson Robotics Lab, Imperial College London" style="height: 2rem;">
+            </p>
+        </div>
+    </footer>
+
+    
+    <script src="main.js"></script>
+    <!-- <script src="https://unpkg.com/image-compare-viewer/dist/image-compare-viewer.min.js"></script> -->
+    <script>
+        const btn_gui = document.querySelectorAll('.btn-gui');
+        btn_gui.forEach(button => {
+            button.addEventListener('click', () => {
+                btn_gui.forEach(b => b.classList.remove('selected'));
+                button.classList.add('selected');
+            });
+        });
+        const btn_split = document.querySelectorAll('.btn-split');
+        btn_split.forEach(button => {
+            button.addEventListener('click', () => {
+                btn_split.forEach(b => b.classList.remove('selected'));
+                button.classList.add('selected');
+            });
+        });
+    
+    </script>    
+
+</body>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        // Get all "navbar-burger" elements
+        const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+
+        // Check if there are any navbar burgers
+        if ($navbarBurgers.length > 0) {
+
+            // Add a click event on each of them
+            $navbarBurgers.forEach(el => {
+                el.addEventListener('click', () => {
+
+                    // Get the target from the "data-target" attribute
+                    const target = el.dataset.target;
+                    const $target = document.getElementById(target);
+
+                    // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+                    el.classList.toggle('is-active');
+                    $target.classList.toggle('is-active');
+
+                });
+            });
+        }
+    });
+</script>
+</html>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
