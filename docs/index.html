@@ -95,13 +95,45 @@
     <section class="section pt-0">
         <div class="container is-max-desktop">
             <h1 class="title is-4">
+                Summary
+            </h1>
+            <div class="content has-text-justified-desktop">
+                <p>
+                    <ul>
+                        <li>
+                            U-ARE-ME provides globally consistent rotation estimates in Manhattan environments across sequences of RGB images, without the need for camera intrinsics.
+                        </li>
+                        <li>
+                            This is done by finding the rotation matrix that aligns the predicted surface normals to the principal directions of the scene.
+                        </li>
+                        <li>
+                            Even in non-Manhattan scenes, it can reliably estimate the global up-direction (i.e. the pitch & roll).
+                        </li>
+                    </ul>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section pt-0">
+        <div class="container is-max-desktop">
+            <h1 class="title is-4">
+                Demo
+            </h1>
+            <iframe style="display: block; margin: auto;" width="768" height="432" src="https://www.youtube.com/embed/Ze5xOGzLl7E" frameborder="0" allowfullscreen></iframe>
+        </div>
+    </section>
+
+    <!-- <section class="section pt-0">
+        <div class="container is-max-desktop">
+            <h1 class="title is-4">
                 Teaser
             </h1>
             <video controls>
                 <source src="video/teaser.mp4" type="video/mp4">
             </video>
         </div>
-    </section>
+    </section> -->
 
 
     <section class="section pt-0">
@@ -114,7 +146,8 @@
                     Camera rotation estimation from a single image is a challenging task, often requiring depth data and/or camera intrinsics, which are generally not available for in-the-wild videos. Although external sensors such as inertial measurement units (IMUs) can help, they often suffer from drift and are not applicable in non-inertial reference frames.
                     We present U-ARE-ME, an algorithm that estimates camera rotation along with uncertainty from uncalibrated RGB images. Using a Manhattan World assumption, our method leverages the per-pixel geometric priors encoded in single-image surface normal predictions and performs optimisation over the SO(3) manifold.
                     Given a sequence of images, we can use the per-frame rotation estimates and their uncertainty to perform multi-frame optimisation, achieving robustness and temporal consistency.
-                    Our experiments demonstrate that U-ARE-ME performs comparably to RGB-D methods and is more robust than sparse feature-based SLAM methods.                </p>
+                    Our experiments demonstrate that U-ARE-ME performs comparably to RGB-D methods and is more robust than sparse feature-based SLAM methods.                
+                </p>
             </div>
         </div>
     </section>
