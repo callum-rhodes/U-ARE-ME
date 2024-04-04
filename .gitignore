@@ -1,0 +1,9 @@
+venv/
+__pycache__/
+*.pyc
+checkpoints/
+.vscode/
+*.prof
+*.pyc
+*.mp4
+trajectory.txt

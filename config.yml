@@ -1,0 +1,27 @@
+#--------------------------------------------------------------------------------------------
+# Input Parameters
+#--------------------------------------------------------------------------------------------
+height: 480
+width: 640
+loop: False  # For image and video inputs, the sequence will loop indefinitely if set True
+
+#--------------------------------------------------------------------------------------------
+# Single Image Rotation Parameters
+#--------------------------------------------------------------------------------------------
+use_kappa: True  # Whether to use kappa weighting when determining the cost function
+kappa_threshold: 75.0  # Upper clamping threshold of max confidence
+
+#--------------------------------------------------------------------------------------------
+# GTSAM Multiframe Parameters
+#---------------------------------------------------------------------------------------------
+use_multi: True  # Will only use single frame estimates if false
+window_length: 30  # Sliding window batch size in frames
+interframe_sigma: 0.75  # Isotropic std deviation for modelling the noise of the interframe constant rotation assumption
+robust: True  # Whether to use a robust kernel on the single frame rotation estimates
+
+#--------------------------------------------------------------------------------------------
+# Viewer Parameters
+#---------------------------------------------------------------------------------------------
+show_viewer: True  # Disable viewer with --save_trajectory for getting a trajectory in the background
+show_mf: True  # Show the Manhattan frame in the camera view
+show_fps: True  # Show the fps of the overall system
