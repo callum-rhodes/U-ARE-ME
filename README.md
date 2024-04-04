@@ -16,6 +16,8 @@ This code accompanies the U-ARE-ME paper (2024).
 ## Initial Setup
 A suitable CUDA enabled graphics card is required to run the system 'out of the box'. At least 4GB of VRAM is required for running the normals model.
 
+Python>=3.10 is required.
+
 We recommend using `python venv` to set up your environment
 Run the following:
 
@@ -83,3 +85,6 @@ If you find this code/work to be useful in your research, please consider citing
     year={2024}
 }
 ```
+
+### Acknowledgement
+This research has been supported by the EPSRC Prosperity Partnership Award with Dyson Technology Ltd.
