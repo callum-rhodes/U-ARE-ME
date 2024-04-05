@@ -145,7 +145,7 @@ if __name__ == '__main__':
                     new_frame_time = time.time()
                     fps = int(1/(new_frame_time-prev_frame_time)) 
                     prev_frame_time = new_frame_time
-                    cv2.putText(img_vis, str(fps), (width-40, height-7), TITLE_FONT, 0.7, (100, 255, 0), 2, cv2.LINE_AA) 
+                    cv2.putText(img_vis, str(fps)+' fps', (width-60, height-7), TITLE_FONT, 0.7, (100, 255, 0), 2, cv2.LINE_AA) 
 
                 ITERATION += 1
  

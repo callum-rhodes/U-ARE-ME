@@ -62,6 +62,11 @@ def define_input(input, device=0, H=480, W=640):
         # Video input
         InputStream = InputVideo(device=device, H=H, W=W, video_path=input)
 
+    elif 'youtube.com' in input:
+        # Youtube link
+        video_id = input.split('watch?v=')[1]
+        InputStream = InputYoutube(device=device, H=H, W=W, video_id=video_id)
+
     else:
         # File pattern can include wildcards for image directories
         # eg. '~/images/*img.png', or also a single image path.
@@ -183,6 +188,52 @@ class InputVideo():
 
         return sample
     
+
+class InputYoutube():
+    def __init__(self, device=0, H=480, W=640, video_id='2y9-35c719Y'):
+        from vidgear.gears import CamGear
+        self.device = device
+        self.url = 'https://www.youtu.be/' + video_id
+        self.stream = CamGear(source=video_id, stream_mode=True, logging=False).start() # YouTube Video URL as input
+
+        self.H = H
+        self.W = W
+        self.next_image = self.stream.read()
+        orig_H, orig_W, _ = self.next_image.shape
+        self.top, self.bottom, self.left, self.right = get_crop(orig_H, orig_W, H, W)
+
+        self.end = False
+
+        # normalize
+        self.normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+
+    def get_sample(self):
+        
+        # color_image: numpy, BGR, (H, W, 3)
+        color_image = self.next_image
+        color_image = color_image[self.top:self.bottom, self.left:self.right, :]
+        color_image = cv2.resize(color_image, (self.W, self.H))
+
+        # img: tensor, RGB, (1, 3, H, W)
+        img = cv2.cvtColor(color_image, cv2.COLOR_BGR2RGB)
+        img = torch.from_numpy(color_image).to(self.device).permute(2, 0, 1).to(dtype=torch.float32)
+        img = (img / 255.0).unsqueeze(0).contiguous()
+        img = self.normalize(img)
+
+        # sample
+        sample = {
+            'color_image': color_image,
+            'img': img,
+        }
+
+        self.next_image = self.stream.read()
+        if self.next_image is None:
+            self.end=True
+
+        return sample
+
+
+
 class InputFilePattern():
     def __init__(self, device=0, 
                  H=480, W=640, file_pattern=None):
