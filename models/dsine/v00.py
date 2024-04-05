@@ -21,7 +21,6 @@ class DSINE_v00(nn.Module):
         learned_upsampling = False
         output_dim = 4
 
-        print('Defining DSINE_v00 (baseline encoder-decoder, w/o ray direction encoding)')
         self.encoder = Encoder(B=B, pretrained=True)
         self.decoder = Decoder(num_classes=output_dim, B=B, NF=NF, BN=BN, 
                                down=down, learned_upsampling=learned_upsampling)

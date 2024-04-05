@@ -58,10 +58,14 @@ if __name__ == '__main__':
     TITLE_FONT = cv2.FONT_HERSHEY_SIMPLEX                                                           # Display title font
     TITLE_WIDTHS = {MODES_DICT[i]: cv2.getTextSize(t, TITLE_FONT, 1, 2)[0][0] 
                     + 20 for i, t in MODES_DICT.items()}                                            # Display title width 
+    DISPLAY_WIDTH = 56
+    ITERATION = 0
 
     ####################################################################################################
     # INITIALISATION
     ####################################################################################################
+    # Display title
+    vis_utils.display_UAREME()
     # Define input source
     InputStream = input_utils.define_input(args.input, device, H=height, W=width)
     # Load surface normal prediction model
@@ -78,6 +82,7 @@ if __name__ == '__main__':
     # Initialise Rotation optimiser
     MNMAopt = MNMAoptimiser(H=height, W=width, use_kappa=use_kappa)
 
+    print("------------------ U-ARE-ME started --------------------")
     if show_viewer:
         # Display
         display = cv2.namedWindow('U-ARE-ME', flags=cv2.WINDOW_GUI_NORMAL)
@@ -87,9 +92,12 @@ if __name__ == '__main__':
     ####################################################################################################
     # MAIN LOOP #
     ####################################################################################################
-    print("*** RUNNING ***")
     while True:
         if not PAUSE:
+            if (ITERATION//4) % 2 == 0:
+                print("                    ooo RUNNING ooo", end="\r")
+            else:
+                print("                    --- RUNNING ---", end="\r")
             ####################################################################################
             # Get input frame
             data_dict = InputStream.get_sample()
@@ -138,6 +146,8 @@ if __name__ == '__main__':
                     fps = int(1/(new_frame_time-prev_frame_time)) 
                     prev_frame_time = new_frame_time
                     cv2.putText(img_vis, str(fps), (width-40, height-7), TITLE_FONT, 0.7, (100, 255, 0), 2, cv2.LINE_AA) 
+
+                ITERATION += 1
  
         ####################################################################################
         if show_viewer:
@@ -150,7 +160,8 @@ if __name__ == '__main__':
                 PAUSE = not PAUSE
             elif keypress in [ord(str(a)) for a in range(1,len(MODES_DICT)+1)]: # Numbers [1,2,3]: cycle through displays
                 DISPLAY_MODE = MODES_DICT[int(keypress) - int(ord('0'))]
-                print(f"Display mode: {DISPLAY_MODE}")
+                display_string = f"Display mode: {DISPLAY_MODE}"
+                print(display_string+" "*(DISPLAY_WIDTH-len(display_string)))
             
             if cv2.getWindowProperty('U-ARE-ME',cv2.WND_PROP_VISIBLE) < 1:        
                 break
@@ -164,5 +175,6 @@ if __name__ == '__main__':
         print("Saved rotation trajectory to ./trajectory.txt")
 
     cv2.destroyAllWindows()
-    print("--- U-ARE-ME successfully terminated ---")
+    print("----------- U-ARE-ME successfully terminated -----------")
+    print("--------------------------------------------------------")
     exit()

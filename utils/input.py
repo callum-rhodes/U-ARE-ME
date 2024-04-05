@@ -22,7 +22,6 @@ from PIL import Image
 def load_checkpoint(fpath, model):
     ''' Loads checkpoint for the given model '''
 
-    print(f'Loading checkpoint... {fpath}')
     ckpt = torch.load(fpath, map_location='cpu')['model']
     load_dict = {}
     for k, v in ckpt.items():
@@ -33,7 +32,6 @@ def load_checkpoint(fpath, model):
             load_dict[k] = v
 
     model.load_state_dict(load_dict)
-    print('Loading checkpoint... done')
     return model
 
 def define_model(device):

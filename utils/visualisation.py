@@ -12,6 +12,19 @@ import torch
 import cv2
 from matplotlib import cm
 
+def display_UAREME():
+    ''' Displays title when code is run '''
+    print("--------------------------------------------------------")
+    print("--------------------------------------------------------")
+    print(r" _   _          ___  ______ ____        ___  ___ ____  ")
+    print(r"| | | |        / _ \ | ___ \  __|       |  \/  ||  __| ")
+    print(r"| | | |  ___  / /_\ \| |_/ / |__   ___  | .  . || |__  ")
+    print(r"| | | | |___| |  _  ||    /|  __| |___| | |\/| ||  __| ")
+    print(r"| |_| |       | | | || |\ \| |___       | |  | || |___ ")
+    print(r" \___/        \_| |_/\_| \_\____/       \_|  |_/\____/ ")
+    print("")
+    print("--------------------------------------------------------")    
+
 def tensor_to_numpy(tensor_in):
     ''' Pytorch tensor to numpy array '''
     if tensor_in is not None:
@@ -52,13 +65,12 @@ def depth_to_rgb(depth, d_min=None, d_max=None):
 
 def visualize_pred(color_image, pred_norm, pred_kappa, mode='RGB'):
     ''' Display the desired output (RGB, Normals, Confidence)'''
-    match mode:
-        case 'Normals':
-            return normal_to_rgb(pred_norm)[0,:,:,::-1].copy()
-        case 'Confidence':
-            return depth_to_rgb(pred_kappa[0,...], d_min=0.0)[...,::-1].copy()
-        case _:
-            return color_image
+    if mode=='Normals':
+        return normal_to_rgb(pred_norm)[0,:,:,::-1].copy()
+    elif mode=='Confidence':
+        return depth_to_rgb(pred_kappa[0,...], d_min=0.0)[...,::-1].copy()
+    else:
+        return color_image
 
 
 def visualize_MFinImage(img, cam2world, line_length=100, line_thickness=2, center=None):
