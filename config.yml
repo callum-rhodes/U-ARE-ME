@@ -4,6 +4,7 @@
 height: 480
 width: 640
 loop: False  # For image and video inputs, the sequence will loop indefinitely if set True
+use_trt: False  # Switch to precompiled Tensor RT model for faster inference (see docs)
 
 #--------------------------------------------------------------------------------------------
 # Single Image Rotation Parameters

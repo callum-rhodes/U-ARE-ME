@@ -11,6 +11,7 @@ import torch
 import numpy as np
 import time
 import yaml
+import warnings
 
 import utils.input as input_utils
 import utils.MFOpt as mfOpt_utils
@@ -35,6 +36,7 @@ if __name__ == '__main__':
     height = config.get('height')
     width = config.get('width')
     loop = config.get('loop')
+    use_trt = config.get('use_trt')
     use_multi = config.get('use_multi')
     window_length = config.get('window_length')
     interframe_sigma = config.get('interframe_sigma')
@@ -45,11 +47,9 @@ if __name__ == '__main__':
     show_fps = config.get('show_fps')
     show_mf = config.get('show_mf')
     if args.input == 'webcam' and not show_viewer:
-        show_viewer = True
-        print("!!! No viewer is not valid for webcam input - Showing viewer !!!")
+        warnings.warn("CONFIG WARN: No viewer selected for webcam input!!!")
     if loop and not show_viewer:
-        show_viewer = True
-        print("!!! No viewer is not valid for looping input - Showing viewer !!!")
+        warnings.warn("CONFIG WARN: No viewer selected for looping input!!!")
 
     # Display constants
     PAUSE = False                                                                                   # Pause or play demo
@@ -69,7 +69,7 @@ if __name__ == '__main__':
     # Define input source
     InputStream = input_utils.define_input(args.input, device, H=height, W=width)
     # Load surface normal prediction model
-    model = input_utils.define_model(device)
+    model = input_utils.define_model(device, use_trt)
 
     # Initialise rotation to identity
     R_opt = np.eye(3)
@@ -145,7 +145,7 @@ if __name__ == '__main__':
                     new_frame_time = time.time()
                     fps = int(1/(new_frame_time-prev_frame_time)) 
                     prev_frame_time = new_frame_time
-                    cv2.putText(img_vis, str(fps)+' fps', (width-60, height-7), TITLE_FONT, 0.7, (100, 255, 0), 2, cv2.LINE_AA) 
+                    cv2.putText(img_vis, str(fps)+' fps', (width-80, height-7), TITLE_FONT, 0.7, (100, 255, 0), 2, cv2.LINE_AA) 
 
                 ITERATION += 1
  

@@ -62,6 +62,22 @@ python uareme.py --input 'path/to/images/patterns/*_img.png' # Wildcard path mus
 
 ```
 
+## Faster inference
+By default the pytorch JIT model is used. For speeding up inference, we provide utilities for running
+a Tensor RT precompiled model. In testing this gives about 1.5x inference speedup vs pytorch.
+
+Since Tensor RT models should be compiled for the specific target hardware, the default model will need to be rebuilt.
+
+We use [torch2trt](https://github.com/NVIDIA-AI-IOT/torch2trt) to do this. Follow the setup instructions from the repo (step 1 and prerequisites).
+
+To create the Tensort RT model, run :
+
+```shell
+python utils/create_trt.py
+```
+
+This will create a new model in 'checkpoints' with '..._trt.pth'. To run using this model, change the use_trt parameter in config.yml to True.
+
 ## Citation
 If you find this code/work to be useful in your research, please consider citing the following:
 

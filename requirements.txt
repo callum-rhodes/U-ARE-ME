@@ -5,3 +5,5 @@ geffnet
 gtsam
 opencv-python
 pyyaml
+vidgear
+yt_dlp
