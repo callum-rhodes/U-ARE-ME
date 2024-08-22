@@ -1,3 +1,13 @@
+""" 
+U-ARE-ME: Uncertainty-Aware Rotation Estimation in Manhattan Environments
+Aalok Patwardhan, Callum Rhodes, Gwangbin Bae, Andrew J. Davison 2024.
+https://callum-rhodes.github.io/U-ARE-ME/
+Copyright (c) 2024 by the authors.
+This code is licensed (see LICENSE for details)
+
+This file contains a script to compile the standard pytorch model to TensorRT format
+"""
+
 import os, sys
 sys.path.append(os.path.join(os.path.dirname(__file__), "../"))
 from torch2trt import torch2trt

@@ -82,7 +82,7 @@ def visualize_MFinImage(img, cam2world, line_length=100, line_thickness=2, cente
     center = (np.array(img.shape[0:2])/2).astype(int) if center is None else center
 
     lines = [x_line, y_line, z_line]
-    colours = [(255,0,0), (0,255,0), (0,0,255)]
+    colours = [(0,0,255), (0,255,0), (255,0,0)]
 
     z_order = np.flip(np.argsort([x_line[2], y_line[2], z_line[2]]))
     lines = [lines[z_order[0]], lines[z_order[1]], lines[z_order[2]]]
