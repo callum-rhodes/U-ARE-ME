@@ -31,6 +31,9 @@ import torch
 from torchvision import transforms
 from utils.MNMAoptimiser import MNMAoptimiser
 from utils import input as input_utils
+import uareme.src.utils.visualisation as vis_utils
+import cv2
+import time
 
 
 class UAREME():
@@ -63,6 +66,15 @@ class UAREME():
         self.R_opt = np.eye(3)
 
         self.singleframe_optimiser = MNMAoptimiser(use_kappa=self.use_kappa)
+    
+        self.MODES_DICT = {1: 'RGB', 2: 'Normals', 3: 'Confidence'}
+        self.DISPLAY_MODE = self.MODES_DICT[1]
+        self.TITLE_FONT = cv2.FONT_HERSHEY_SIMPLEX                                        # List of displays
+        self.TITLE_WIDTHS = {self.MODES_DICT[i]: cv2.getTextSize(t, self.TITLE_FONT, 1, 2)[0][0] 
+                        + 20 for i, t in self.MODES_DICT.items()}                                            # Display title width 
+        self.DISPLAY_WIDTH = 56
+        self.prev_frame_time = time.time()
+
 
     def run(self, img : np.ndarray, format: str = 'RGB'):
         # Preprocess image to torch format. The input image must be uint8 format
@@ -116,3 +128,22 @@ class UAREME():
         img_torch = self.normalise_fn(img_torch)
 
         return img_torch
+
+    def create_visualisation(self, color_image, R_opt, norm_out, kappa_out, DISPLAY_MODE, show_mf=True, show_fps=True):
+        img_vis = vis_utils.visualize_pred(color_image, norm_out, kappa_out, DISPLAY_MODE) 
+        h, w = img_vis.shape[:2]
+        if show_mf:
+            img_vis = vis_utils.visualize_MFinImage(img_vis, R_opt, line_thickness=4)
+
+        # Display title
+        img_vis = cv2.rectangle(img_vis, (0, 0), (self.TITLE_WIDTHS[DISPLAY_MODE], 40), (0,0,0), -1)
+        img_vis = cv2.putText(img_vis, DISPLAY_MODE, (10,30), self.TITLE_FONT,  
+            1, (255,255,255), 2, cv2.LINE_AA) 
+        
+        if show_fps:
+            new_frame_time = time.time()
+            fps = int(1/(new_frame_time-self.prev_frame_time)) 
+            self.prev_frame_time = new_frame_time
+            cv2.putText(img_vis, str(fps)+' fps', (w-80, h-7), self.TITLE_FONT, 0.7, (100, 255, 0), 2, cv2.LINE_AA) 
+        
+        return img_vis
