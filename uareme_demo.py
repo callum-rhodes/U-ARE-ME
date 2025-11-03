@@ -114,7 +114,7 @@ if __name__ == '__main__':
             elif keypress == ord(' '):                          # Spacebar
                 PAUSE = not PAUSE
             elif keypress in [ord(str(a)) for a in range(1,len(uareme.MODES_DICT)+1)]: # Numbers [1,2,3]: cycle through displays
-                DISPLAY_MODE = uareme.MODES_DICT[int(keypress) - int(ord('0'))]
+                uareme.DISPLAY_MODE = uareme.MODES_DICT[int(keypress) - int(ord('0'))]
                 display_string = f"Display mode: {uareme.DISPLAY_MODE}"
                 print(display_string+" "*(uareme.DISPLAY_WIDTH-len(display_string)))
             
