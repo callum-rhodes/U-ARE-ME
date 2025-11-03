@@ -27,7 +27,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--input', default='webcam', type=str, help=r'webcam: generic webcam input, /path/to/video.mp4: video file (.mp4 or .avi), "/wildcard/pattern_*img.png": images with wildcard (glob), but must be in quotes')
     parser.add_argument('--save_trajectory', action='store_true')
-    parser.add_argument('--output', default='output.mp4', type=str, help='Output video path')
+    parser.add_argument('--output', default=None, type=str, help='Output video path')
     args = parser.parse_args()
 
     # Read in default parameters
@@ -56,12 +56,6 @@ if __name__ == '__main__':
 
     # Display constants
     PAUSE = False                                                                                   # Pause or play demo
-    MODES_DICT = {1: 'RGB', 2: 'Normals', 3: 'Confidence'}                                          # List of displays
-    DISPLAY_MODE = 'RGB'
-    TITLE_FONT = cv2.FONT_HERSHEY_SIMPLEX                                                           # Display title font
-    TITLE_WIDTHS = {MODES_DICT[i]: cv2.getTextSize(t, TITLE_FONT, 1, 2)[0][0] 
-                    + 20 for i, t in MODES_DICT.items()}                                            # Display title width 
-    DISPLAY_WIDTH = 56
     ITERATION = 0
 
     ####################################################################################################
@@ -80,8 +74,7 @@ if __name__ == '__main__':
     if show_viewer:
         # Display
         display = cv2.namedWindow('U-ARE-ME', flags=cv2.WINDOW_GUI_NORMAL)
-        print(f"Display mode: {DISPLAY_MODE}")
-        prev_frame_time = time.time()
+        print(f"Display mode: {uareme.DISPLAY_MODE}")
 
     ####################################################################################################
     # MAIN LOOP #
@@ -105,26 +98,11 @@ if __name__ == '__main__':
             R_traj.append(R_opt)
 
             if show_viewer or args.output is not None:
-                # Display RGB, NORMALS, CONFIDENCE, and draw on coordinate frame from current rotation estimate
-                img_vis = vis_utils.visualize_pred(color_image, norm_out, kappa_out, DISPLAY_MODE)
-                if show_mf:
-                    img_vis = vis_utils.visualize_MFinImage(img_vis, R_opt, line_thickness=4)
-
-                # Display title
-                img_vis = cv2.rectangle(img_vis, (0, 0), (TITLE_WIDTHS[DISPLAY_MODE], 40), (0,0,0), -1)
-                img_vis = cv2.putText(img_vis, DISPLAY_MODE, (10,30), TITLE_FONT,  
-                    1, (255,255,255), 2, cv2.LINE_AA) 
-                
-                if show_fps:
-                    new_frame_time = time.time()
-                    fps = int(1/(new_frame_time-prev_frame_time)) 
-                    prev_frame_time = new_frame_time
-                    cv2.putText(img_vis, str(fps)+' fps', (width-80, height-7), TITLE_FONT, 0.7, (100, 255, 0), 2, cv2.LINE_AA) 
-
+                img_vis = uareme.create_visualisation(color_image, R_opt, norm_out, kappa_out, uareme.DISPLAY_MODE)
                 if args.output is not None:
                     OutputWriter.write(img_vis)
 
-                ITERATION += 1
+            ITERATION += 1
  
         ####################################################################################
         if show_viewer:
@@ -135,10 +113,10 @@ if __name__ == '__main__':
                 break 
             elif keypress == ord(' '):                          # Spacebar
                 PAUSE = not PAUSE
-            elif keypress in [ord(str(a)) for a in range(1,len(MODES_DICT)+1)]: # Numbers [1,2,3]: cycle through displays
-                DISPLAY_MODE = MODES_DICT[int(keypress) - int(ord('0'))]
-                display_string = f"Display mode: {DISPLAY_MODE}"
-                print(display_string+" "*(DISPLAY_WIDTH-len(display_string)))
+            elif keypress in [ord(str(a)) for a in range(1,len(uareme.MODES_DICT)+1)]: # Numbers [1,2,3]: cycle through displays
+                DISPLAY_MODE = uareme.MODES_DICT[int(keypress) - int(ord('0'))]
+                display_string = f"Display mode: {uareme.DISPLAY_MODE}"
+                print(display_string+" "*(uareme.DISPLAY_WIDTH-len(display_string)))
             
             if cv2.getWindowProperty('U-ARE-ME',cv2.WND_PROP_VISIBLE) < 1:        
                 break

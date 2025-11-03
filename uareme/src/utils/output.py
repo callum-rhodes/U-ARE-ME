@@ -25,7 +25,8 @@ class OutputWriter:
         self._mode = None
         self.written = False
         self.temp_file_path = 'temp.mp4'
-
+        if output_path is None:
+            return
         out_lower = (output_path or '').lower()
         if out_lower.endswith('.mp4'):
             self._mode = 'video'
@@ -41,7 +42,8 @@ class OutputWriter:
         - For video: initializes writer on first call using frame size.
         - For image (.png): writes/overwrites the file on every call.
         """
-        # img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+        if self._mode is None:
+            return
         if self._mode == 'image':
             cv2.imwrite(self.output_path, img)
             self.written = True
