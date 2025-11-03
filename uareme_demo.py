@@ -28,6 +28,7 @@ if __name__ == '__main__':
     parser.add_argument('--input', default='webcam', type=str, help=r'webcam: generic webcam input, /path/to/video.mp4: video file (.mp4 or .avi), "/wildcard/pattern_*img.png": images with wildcard (glob), but must be in quotes')
     parser.add_argument('--save_trajectory', action='store_true')
     parser.add_argument('--output', default=None, type=str, help='Output video path')
+    parser.add_argument('--ckpt_dir', default=None, type=str, help='Checkpoints path')
     args = parser.parse_args()
 
     # Read in default parameters
@@ -49,6 +50,7 @@ if __name__ == '__main__':
     show_viewer = config.get('show_viewer')
     show_fps = config.get('show_fps')
     show_mf = config.get('show_mf')
+
     if args.input == 'webcam' and not show_viewer:
         warnings.warn("CONFIG WARN: No viewer selected for webcam input!!!")
     if loop and not show_viewer:
@@ -64,7 +66,9 @@ if __name__ == '__main__':
     # Display title
     vis_utils.display_UAREME()
     # UAREME class
-    uareme = UAREME(b_trt_model=use_trt, b_kappa=use_kappa, kappa_threshold=kappa_threshold, b_multiframe=use_multi, b_robust=robust, window_length=window_length, interframe_sigma=interframe_sigma)
+    uareme = UAREME(b_trt_model=use_trt, b_kappa=use_kappa, kappa_threshold=kappa_threshold,
+                    b_multiframe=use_multi, b_robust=robust, window_length=window_length,
+                    interframe_sigma=interframe_sigma, checkpoints_dir=args.ckpt_dir)
     # Define input source
     InputStream = input_utils.define_input(args.input, device, H=height, W=width)
     OutputWriter = OutputWriter(args.output, fps=30)

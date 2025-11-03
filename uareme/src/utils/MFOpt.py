@@ -8,6 +8,15 @@ This code is licensed (see LICENSE for details)
 This file contains the GTSAM implementation for multiframe optimisation
 """
 import gtsam
+try:
+    _ = gtsam.BatchFixedLagSmoother
+    _ = gtsam.FixedLagSmootherKeyTimestampMap
+except:
+    # Older versions of Python don't have GTSAM>4.2, which need these.
+    import gtsam_unstable
+    gtsam.BatchFixedLagSmoother = gtsam_unstable.BatchFixedLagSmoother
+    gtsam.FixedLagSmootherKeyTimestampMap = gtsam_unstable.FixedLagSmootherKeyTimestampMap
+
 import numpy as np
 from scipy.spatial.transform import Rotation as ScipyRot
 

@@ -44,8 +44,10 @@ class UAREME():
                  b_multiframe : bool = True,
                  b_robust : bool = True,
                  window_length : int = 30,
-                 interframe_sigma : float = 0.75):
+                 interframe_sigma : float = 0.75,
+                 checkpoints_dir : str = None):
 
+        self.checkpoints_dir = checkpoints_dir
         self.use_multi = b_multiframe
         if self.use_multi:
             from utils import MFOpt as mfOpt_utils
@@ -61,7 +63,7 @@ class UAREME():
         self.kappa_thresh = kappa_threshold
 
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-        self.model = input_utils.define_model(self.device, b_trt_model)
+        self.model = input_utils.define_model(self.device, b_trt_model, self.checkpoints_dir)
         self.normalise_fn = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
         self.R_opt = np.eye(3)
 

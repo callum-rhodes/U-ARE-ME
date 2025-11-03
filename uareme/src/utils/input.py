@@ -34,10 +34,9 @@ def load_checkpoint(fpath, model):
     model.load_state_dict(load_dict)
     return model
 
-def define_model(device, trt=False):
+def define_model(device, trt=False, checkpoints_dir=None):
     ''' Load model for surface normal prediction '''
-    file_path = os.path.dirname(os.path.abspath(__file__))
-    file_path  += '/../checkpoints/'
+    file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'checkpoints') if checkpoints_dir is None else checkpoints_dir
     if trt:
         from torch2trt import TRTModule
         model = TRTModule()
@@ -45,7 +44,7 @@ def define_model(device, trt=False):
     else:
         from models.dsine.v00 import DSINE_v00 as DSINE
         model = DSINE().to(device)
-        checkpoint = file_path+'dsine_v00.pt'
+        checkpoint = os.path.join(file_path, 'dsine_v00.pt')
         model = load_checkpoint(checkpoint, model)
         model.eval()
 
