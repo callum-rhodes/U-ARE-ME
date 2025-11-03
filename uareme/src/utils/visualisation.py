@@ -40,13 +40,15 @@ def tensor_to_numpy(tensor_in):
 
 def normal_to_rgb(normal, normal_mask=None, to_numpy=True):
     ''' Converts the surfance normals into an RGB image '''
-    normal_rgb = (((tensor_to_numpy(normal) + 1) * 0.5) * 255).astype(np.uint8)
+    if torch.is_tensor(normal):
+        normal = tensor_to_numpy(normal)
+    normal_rgb = (((normal + 1) * 0.5) * 255).astype(np.uint8)
     return normal_rgb
 
 # depth to rgb
 def depth_to_rgb(depth, d_min=None, d_max=None):
     ''' Normalises and clips depth data and produces a 3-channel RGB output '''
-    depth = tensor_to_numpy(depth)
+    depth = tensor_to_numpy(depth) if torch.is_tensor(depth) else depth
 
     if d_min is not None:
         depth[depth < d_min] = d_min
@@ -66,18 +68,23 @@ def depth_to_rgb(depth, d_min=None, d_max=None):
 def visualize_pred(color_image, pred_norm, pred_kappa, mode='RGB'):
     ''' Display the desired output (RGB, Normals, Confidence)'''
     if mode=='Normals':
-        return normal_to_rgb(pred_norm)[0,:,:,::-1].copy()
+        normals = normal_to_rgb(pred_norm)
+        return normals.copy() if len(pred_norm.shape) == 3 else normals[0,:,:,::-1].copy()
     elif mode=='Confidence':
-        return depth_to_rgb(pred_kappa[0,...], d_min=0.0)[...,::-1].copy()
+        # Re-use the depth_to_rgb function for the confidence map
+        pred_kappa = pred_kappa if len(pred_kappa.shape) == 3 else pred_kappa[0,...]
+        return depth_to_rgb(pred_kappa, d_min=0.0)[...,::-1].copy()
     else:
         return color_image
 
 
-def visualize_MFinImage(img, cam2world, line_length=100, line_thickness=2, center=None):
-    ''' Draw a the current rotation estimate as a coordinate frame on the given image'''
-    x_line = (cam2world[0,:] * line_length).astype(int)
-    y_line = (cam2world[1,:] * line_length).astype(int)
-    z_line = (cam2world[2,:] * line_length).astype(int)
+def visualize_MFinImage(img, R_wc, line_length=100, line_thickness=2, center=None):
+    ''' Draw a the current rotation estimate as a coordinate frame on the given image.
+        UAREME provides the cam2world rotation estimate, R_wc, here we display the world2cam rotation estimate, R_cw.'''
+    R_cw = R_wc.T
+    x_line = (R_cw[:,0] * line_length).astype(int)
+    y_line = (R_cw[:,1] * line_length).astype(int)
+    z_line = (R_cw[:,2] * line_length).astype(int)
 
     center = (np.array(img.shape[0:2])/2).astype(int) if center is None else center
 

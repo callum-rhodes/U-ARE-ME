@@ -12,24 +12,27 @@ import numpy as np
 import time
 import yaml
 import warnings
-
-import utils.input as input_utils
-import utils.MFOpt as mfOpt_utils
-from utils.MNMAoptimiser import MNMAoptimiser
-import utils.visualisation as vis_utils
+import os
+import uareme.src.config as uareme_cfg
+import uareme.src.utils.input as input_utils
+import uareme.src.utils.visualisation as vis_utils
+from uareme.src.uareme_cls import UAREME
+from uareme.src.utils.output import OutputWriter
 
 if __name__ == '__main__':
     # Initialise device
-    device = torch.device('cuda:0')
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
     # Input arguments parser: choose input and whether to save the estimated rotations
     parser = argparse.ArgumentParser()
     parser.add_argument('--input', default='webcam', type=str, help=r'webcam: generic webcam input, /path/to/video.mp4: video file (.mp4 or .avi), "/wildcard/pattern_*img.png": images with wildcard (glob), but must be in quotes')
     parser.add_argument('--save_trajectory', action='store_true')
+    parser.add_argument('--output', default='output.mp4', type=str, help='Output video path')
     args = parser.parse_args()
 
     # Read in default parameters
-    with open('config.yml', 'r') as file:
+    CFG_DIR = os.path.dirname(os.path.abspath(uareme_cfg.__file__))
+    with open(os.path.join(CFG_DIR, 'config.yml'), 'r') as file:
         config = yaml.safe_load(file)
 
     # Set parameters
@@ -66,21 +69,12 @@ if __name__ == '__main__':
     ####################################################################################################
     # Display title
     vis_utils.display_UAREME()
+    # UAREME class
+    uareme = UAREME(b_trt_model=use_trt, b_kappa=use_kappa, kappa_threshold=kappa_threshold, b_multiframe=use_multi, b_robust=robust, window_length=window_length, interframe_sigma=interframe_sigma)
     # Define input source
     InputStream = input_utils.define_input(args.input, device, H=height, W=width)
-    # Load surface normal prediction model
-    model = input_utils.define_model(device, use_trt)
-
-    # Initialise rotation to identity
-    R_opt = np.eye(3)
+    OutputWriter = OutputWriter(args.output, fps=30)
     R_traj = []
-
-    # Initialise multiframe Optimiser if enabled
-    if use_multi:
-        multiframeOptimiser = mfOpt_utils.gtsam_rot(window_length=window_length, interframe_sigma=interframe_sigma, robust=robust)
-
-    # Initialise Rotation optimiser
-    MNMAopt = MNMAoptimiser(H=height, W=width, use_kappa=use_kappa)
 
     print("------------------ U-ARE-ME started --------------------")
     if show_viewer:
@@ -102,37 +96,17 @@ if __name__ == '__main__':
             # Get input frame
             data_dict = InputStream.get_sample()
             color_image = data_dict['color_image']  # For visualisation
-            img = data_dict['img']                  # Tensor, (normalised) for processing
 
-            ####################################################################################
-            # Prediction of surface normals and their confidence (kappa)
-            with torch.no_grad():
-                norm_out = model(img)[0]
-                pred_norm = norm_out[:, :3, :, :]
-                pred_kappa = norm_out[:, 3:, :, :]
-                pred_kappa[pred_kappa > kappa_threshold] = kappa_threshold
-                pred_norm_vec = pred_norm[0,...].view(3, -1)
-                pred_kappa_vec = pred_kappa[0,...].view(1, -1)
-
-            ####################################################################################
-            # MNMA Rotation optimisation
-            init_R = R_opt
-            R_torch, cov_torch = MNMAopt.optimise(init_R, pred_norm_vec, pred_kappa_vec)
-            R_opt = R_torch.detach().numpy()        # Optimised rotation estimate
-            cov = cov_torch.detach().numpy()        # Covariance of rotation estimate
-
-            ####################################################################################
-            # Multiframe Optimisation
-            if use_multi:
-                R_opt = multiframeOptimiser.optimise(R_opt, cov)
+            R_opt, norm_out, kappa_out = uareme.run(color_image, format='RGB')
+            # Returned values: R_opt (3, 3), norm_out (H, W, 3), kappa_out (H, W, 1)
 
             ####################################################################################
             # Post processing
             R_traj.append(R_opt)
 
-            if show_viewer:
+            if show_viewer or args.output is not None:
                 # Display RGB, NORMALS, CONFIDENCE, and draw on coordinate frame from current rotation estimate
-                img_vis = vis_utils.visualize_pred(color_image, pred_norm, pred_kappa, DISPLAY_MODE)
+                img_vis = vis_utils.visualize_pred(color_image, norm_out, kappa_out, DISPLAY_MODE)
                 if show_mf:
                     img_vis = vis_utils.visualize_MFinImage(img_vis, R_opt, line_thickness=4)
 
@@ -146,6 +120,9 @@ if __name__ == '__main__':
                     fps = int(1/(new_frame_time-prev_frame_time)) 
                     prev_frame_time = new_frame_time
                     cv2.putText(img_vis, str(fps)+' fps', (width-80, height-7), TITLE_FONT, 0.7, (100, 255, 0), 2, cv2.LINE_AA) 
+
+                if args.output is not None:
+                    OutputWriter.write(img_vis)
 
                 ITERATION += 1
  
@@ -169,6 +146,7 @@ if __name__ == '__main__':
         if InputStream.end and not loop:
             break
 
+    OutputWriter.close()
     if args.save_trajectory:
         R_traj = np.vstack(tuple(R_traj))
         np.savetxt("trajectory.txt", R_traj)

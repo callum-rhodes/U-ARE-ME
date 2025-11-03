@@ -14,7 +14,7 @@ from torch2trt import torch2trt
 import input as input_utils
 import torch
 
-device = torch.device('cuda:0')
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 save_path = 'checkpoints/dsine_v00_trt.pth'
 
 # Load surface normal prediction model

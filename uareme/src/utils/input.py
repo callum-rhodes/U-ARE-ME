@@ -108,10 +108,14 @@ class InputWebcam():
     ''' Generic Webcam input '''
     def __init__(self, device=0, H=480, W=640):
         self.device = device
-        self.cap = cv2.VideoCapture(0, cv2.CAP_V4L2)
+        try:
+            self.cap = cv2.VideoCapture(0, cv2.CAP_V4L2)
+            assert self.cap.isOpened()
+        except:
+            self.cap = cv2.VideoCapture(0)
+            assert self.cap.isOpened()
         self.H = H
         self.W = W
-        assert self.cap.isOpened()
 
         # Get crop dimensions
         _, frame = self.cap.read()

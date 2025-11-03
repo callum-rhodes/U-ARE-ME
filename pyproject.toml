@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "uareme"
+description = "UAREME package"
+version = "0.1.0"
+dependencies = [
+    "numpy",
+    "scipy",
+    "matplotlib",
+    "geffnet",
+    "gtsam",
+    "opencv-python",
+    "pyyaml",
+    "vidgear",
+    "yt_dlp"
+]
+
+[tool.setuptools.packages.find]
+where = [
+    "src",
+    "models",
+    "utils"
+]
