@@ -15,9 +15,9 @@ kappa_threshold: 75.0  # Upper clamping threshold of max confidence
 #--------------------------------------------------------------------------------------------
 # GTSAM Multiframe Parameters
 #---------------------------------------------------------------------------------------------
-use_multi: True  # Will only use single frame estimates if false
+use_multi: False  # Will only use single frame estimates if false
 window_length: 30  # Sliding window batch size in frames
-interframe_sigma: 0.75  # Isotropic std deviation for modelling the noise of the interframe constant rotation assumption
+interframe_sigma: 0.01  # Isotropic std deviation for modelling the noise of the interframe constant rotation assumption
 robust: True  # Whether to use a robust kernel on the single frame rotation estimates
 
 #--------------------------------------------------------------------------------------------

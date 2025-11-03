@@ -15,10 +15,11 @@ This code accompanies the U-ARE-ME paper (2024).
 
 ## Initial Setup
 A suitable CUDA enabled graphics card is required to run the system 'out of the box'. At least 4GB of VRAM is required for running the normals model.
+You can run the model with just CPU but it will be insanely slow.
 
-Python>=3.9 is required.
+Python >=3.9 and <=3.14  is required.
 
-We recommend using `python venv` to set up your environment
+We strongly recommend using `python venv` to set up your environment
 Run the following:
 
 Clone the repository
@@ -37,29 +38,29 @@ python3 -m venv venv
 # Install pytorch as per instructions at https://pytorch.org/get-started/locally/
 pip3 install torch torchvision torchaudio
 
-# Install the rest of the requirements
-pip3 install -r requirements.txt
+# Install the rest of the requirements by creating an editable installation
+pip3 install -e .
 ```
 We use a pretrained surface normal estimation network (visit [DSINE (CVPR 2024)](https://github.com/baegwangbin/DSINE) for more info). Download the model weights from [here](https://drive.google.com/file/d/170KNIcId99_FmrZw9UiJZEnBIlFPkbi6/view?usp=sharing). Once downloaded, create a 'checkpoints' directory in the main repository and paste the dsine_v00.pt file into the checkpoints folder e.g.
 ```shell
-mkdir checkpoints
-mv ~/Downloads/dsine_v00.pt checkpoints/
+mkdir src/checkpoints
+mv ~/Downloads/dsine_v00.pt src/checkpoints/
 ```
 
 ## Run demo
 Input can be a video file, path to images, or webcam (default)
 To save the rotation estimates add the --save_trajectory argument
+To save the visualisation use --output <output_video_path.mp4 | output_img_path.png >
 
 You can edit further parameters in the config.yml file.
 
 ```shell
 # Webcam input
-python uareme.py
+python uareme_demo.py
 # Video file input
-python uareme.py --input <myvideo.mp4>
+python uareme_demo.py --input <myvideo.mp4>
 # Images input (with wildcard pattern)
-python uareme.py --input 'path/to/images/patterns/*_img.png' # Wildcard path must be in quotes
-
+python uareme_demo.py --input 'path/to/images/patterns/*_img.png' # Wildcard path must be in quotes
 ```
 
 ## Faster inference

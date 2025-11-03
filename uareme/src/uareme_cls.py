@@ -2,7 +2,7 @@
 U-ARE-ME: Uncertainty-Aware Rotation Estimation in Manhattan Environments
 Aalok Patwardhan, Callum Rhodes, Gwangbin Bae, Andrew J. Davison 2024.
 https://callum-rhodes.github.io/U-ARE-ME/
-Copyright (c) 2024 by the authors.
+Copyright (c) 2025 by the authors.
 This code is licensed (see LICENSE for details)
 
 The file contains a U-ARE-ME class wrapper
@@ -35,7 +35,6 @@ from utils import input as input_utils
 
 class UAREME():
     def __init__(self,
-                 img : np.ndarray,
                  b_trt_model : bool = False,
                  b_kappa : bool = True,
                  kappa_threshold : float = 75.0,
@@ -63,11 +62,10 @@ class UAREME():
         self.normalise_fn = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
         self.R_opt = np.eye(3)
 
-        H, W, _ = img.shape
-        self.singleframe_optimiser = MNMAoptimiser(H=H, W=W, use_kappa=self.use_kappa)
+        self.singleframe_optimiser = MNMAoptimiser(use_kappa=self.use_kappa)
 
     def run(self, img : np.ndarray, format: str = 'RGB'):
-        # Preprocess image to torch format
+        # Preprocess image to torch format. The input image must be uint8 format
         img_torch = self.preprocess_img(img, format)
 
         ####################################################################################
@@ -75,13 +73,13 @@ class UAREME():
         if img_torch is not None:
             with torch.no_grad():
                 model_out = self.model(img_torch)[0]
-                pred_norm = model_out[:, :3, :, :]
-                norm_out = pred_norm.detach().cpu().permute(0, 2, 3, 1).squeeze(0).numpy()
-                pred_kappa = model_out[:, 3:, :, :]
-                kappa_out = pred_kappa.detach().cpu().permute(0, 2, 3, 1).squeeze(0).numpy()
+                pred_norm = model_out[:, :3, :, :]  # (1, 3, H, W)
+                norm_out = pred_norm.detach().cpu().permute(0, 2, 3, 1).squeeze(0).numpy()  # (H, W, 3)
+                pred_kappa = model_out[:, 3:, :, :]  # (1, 1, H, W)
+                kappa_out = pred_kappa.detach().cpu().permute(0, 2, 3, 1).squeeze(0).numpy()  # (H, W, 1)
                 pred_kappa[pred_kappa > self.kappa_thresh] = self.kappa_thresh
-                pred_norm_vec = pred_norm[0,...].view(3, -1)
-                pred_kappa_vec = pred_kappa[0,...].view(1, -1)
+                pred_norm_vec = pred_norm[0,...].view(3, -1)  # (3, H*W)
+                pred_kappa_vec = pred_kappa[0,...].view(1, -1)  # (1, H*W) 
         
         ####################################################################################
         # MNMA Rotation optimisation
@@ -102,7 +100,7 @@ class UAREME():
         if format == 'BGR':
             assert(D==3)
             img_rgb = img[:, :, ::-1]
-        elif format == 'Greyscale':
+        elif format == 'Grayscale':
             assert(D==1)
             img_rgb = np.dstack((img, img, img))
         elif format == 'RGB':

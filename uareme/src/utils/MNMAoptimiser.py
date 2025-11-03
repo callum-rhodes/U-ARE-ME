@@ -12,7 +12,7 @@ from scipy.spatial.transform import Rotation as ScipyRot
 
 
 class MNMAoptimiser:
-    def __init__(self, H=480, W=640, use_kappa=True, max_iters=50):
+    def __init__(self, use_kappa=True, max_iters=50):
             self.device = "cpu" #CPU is faster for small operations
             self.dtype = torch.float64
             self.use_kappa = use_kappa

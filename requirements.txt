@@ -1,9 +1,0 @@
-numpy
-scipy
-matplotlib
-geffnet
-gtsam
-opencv-python
-pyyaml
-vidgear
-yt_dlp
