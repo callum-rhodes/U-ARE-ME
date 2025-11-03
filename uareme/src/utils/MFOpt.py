@@ -8,7 +8,6 @@ This code is licensed (see LICENSE for details)
 This file contains the GTSAM implementation for multiframe optimisation
 """
 import gtsam
-import gtsam_unstable
 import numpy as np
 from scipy.spatial.transform import Rotation as ScipyRot
 
@@ -29,13 +28,13 @@ class gtsam_rot():
         self.bComputeMarginals = False
 
         # optimiser params
-        self.fixedlagsmoother = gtsam_unstable.BatchFixedLagSmoother(self.window_length)
+        self.fixedlagsmoother = gtsam.BatchFixedLagSmoother(self.window_length)
 
         self.identity_rotation = gtsam.Rot3(np.identity(3, dtype=np.float64))
         initial_noise = gtsam.noiseModel.Diagonal.Sigmas(np.array([0.1, 0.1, 0.1], dtype=np.float64))
 
         new_vals = gtsam.Values()
-        new_timestamps = gtsam_unstable.gtsam_unstable.FixedLagSmootherKeyTimestampMap()
+        new_timestamps = gtsam.FixedLagSmootherKeyTimestampMap()
         new_factors = gtsam.NonlinearFactorGraph()
         new_vals.insert(0, self.identity_rotation)
         new_timestamps.insert((0, 0.0))
@@ -75,7 +74,7 @@ class gtsam_rot():
         if rot is not None:
             self.current_timestamp += 1
             new_vals = gtsam.Values()
-            new_timestamps = gtsam_unstable.gtsam_unstable.FixedLagSmootherKeyTimestampMap()
+            new_timestamps = gtsam.FixedLagSmootherKeyTimestampMap()
             new_factors = gtsam.NonlinearFactorGraph()
             new_vals.insert(int(self.current_timestamp), rot)
             new_timestamps.insert((int(self.current_timestamp), self.current_timestamp))
