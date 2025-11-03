@@ -50,7 +50,10 @@ mv ~/Downloads/dsine_v00.pt src/checkpoints/
 ## Run demo
 Input can be a video file, path to images, or webcam (default)
 To save the rotation estimates add the --save_trajectory argument
-To save the visualisation use --output <output_video_path.mp4 | output_img_path.png >
+To save the visualisation use 
+```shell
+--output <output_path[.mp4|.png]
+```
 
 You can edit further parameters in the config.yml file.
 
