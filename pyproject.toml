@@ -15,7 +15,8 @@ dependencies = [
     "opencv-python",
     "pyyaml",
     "vidgear",
-    "yt_dlp"
+    "yt_dlp",
+    "gdown"
 ]
 
 [tool.setuptools.packages.find]

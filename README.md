@@ -37,14 +37,15 @@ python3 -m venv venv
 
 # Install pytorch as per instructions at https://pytorch.org/get-started/locally/
 pip3 install torch torchvision torchaudio
+# or for cuda version (e.g. cuda 12.8):
+# pip3 install torch torchvision --index-url https://download.pytorch.org/whl/cu128
 
 # Install the rest of the requirements by creating an editable installation
 pip3 install -e .
 ```
-We use a pretrained surface normal estimation network (visit [DSINE (CVPR 2024)](https://github.com/baegwangbin/DSINE) for more info). Download the model weights from [here](https://drive.google.com/file/d/170KNIcId99_FmrZw9UiJZEnBIlFPkbi6/view?usp=sharing). Once downloaded, create a 'checkpoints' directory in the main repository and paste the dsine_v00.pt file into the checkpoints folder e.g.
+We use a pretrained surface normal estimation network (visit [DSINE (CVPR 2024)](https://github.com/baegwangbin/DSINE) for more info). Download the model weights from [here](https://drive.google.com/file/d/170KNIcId99_FmrZw9UiJZEnBIlFPkbi6/view?usp=sharing), or just run the following:
 ```shell
-mkdir src/checkpoints
-mv ~/Downloads/dsine_v00.pt src/checkpoints/
+gdown --fuzzy https://drive.google.com/file/d/170KNIcId99_FmrZw9UiJZEnBIlFPkbi6/view -O uareme/src/checkpoints/dsine_v00.pt
 ```
 
 ## Run demo
@@ -52,7 +53,7 @@ Input can be a video file, path to images, or webcam (default)
 To save the rotation estimates add the --save_trajectory argument
 To save the visualisation use 
 ```shell
---output <output_path[.mp4|.png]
+--output <output_path[.mp4|.png]>
 ```
 
 You can edit further parameters in the config.yml file.
