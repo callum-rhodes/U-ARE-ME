@@ -44,7 +44,7 @@ class UAREME():
                  b_multiframe : bool = True,
                  b_robust : bool = True,
                  window_length : int = 30,
-                 interframe_sigma : float = 0.75,
+                 interframe_sigma : float = 0.1,
                  checkpoints_dir : str = None):
 
         self.checkpoints_dir = checkpoints_dir
@@ -113,7 +113,7 @@ class UAREME():
         H, W, D = img.shape
         if format == 'BGR':
             assert(D==3)
-            img_rgb = img[:, :, ::-1]
+            img_rgb = img[:, :, ::-1].copy()
         elif format == 'Grayscale':
             assert(D==1)
             img_rgb = np.dstack((img, img, img))
