@@ -94,7 +94,7 @@ if __name__ == '__main__':
             data_dict = InputStream.get_sample()
             color_image = data_dict['color_image']  # For visualisation
 
-            R_opt, norm_out, kappa_out = uareme.run(color_image, format='RGB')
+            R_opt, norm_out, kappa_out, R_cov = uareme.run(color_image, format='RGB')
             # Returned values: R_opt (3, 3), norm_out (H, W, 3), kappa_out (H, W, 1)
 
             ####################################################################################

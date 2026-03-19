@@ -18,7 +18,7 @@ INIT:       - img -> numpy array (any image of desired size)
             - window_length -> int (optional)
             - interframe_sigma -> float (optional)
 
-CALL: rotation, normals, confidence = UAREME.run(img -> numpy array)
+CALL: rotation, normals, confidence, rotation_covariance = UAREME.run(img -> numpy array)
 
 If using multiframe input images must be sequential
 
@@ -100,14 +100,14 @@ class UAREME():
         init_R = self.R_opt if self.use_multi else np.eye(3)
         R_torch, cov_torch = self.singleframe_optimiser.optimise(init_R, pred_norm_vec, pred_kappa_vec)
         self.R_opt = R_torch.detach().numpy()        # Optimised rotation estimate
-        cov = cov_torch.detach().numpy()        # Covariance of rotation estimate
+        R_cov = cov_torch.detach().numpy()        # Covariance of rotation estimate
 
         ####################################################################################
         # Multiframe Optimisation
         if self.use_multi:
-            self.R_opt = self.multiframe_optimiser.optimise(self.R_opt, cov)
+            self.R_opt = self.multiframe_optimiser.optimise(self.R_opt, R_cov)
 
-        return self.R_opt.copy(), norm_out, kappa_out
+        return self.R_opt.copy(), norm_out, kappa_out, R_cov
 
     def preprocess_img(self, img, format):
         H, W, D = img.shape
